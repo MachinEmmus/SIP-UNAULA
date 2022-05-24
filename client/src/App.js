@@ -1,11 +1,11 @@
 import React from 'react';
-import Todo from './components/Todo';
+import MainPage from './pages/MainPage';
 import './App.css';
 
 const App = () => {
   return (
     <div className="App">
-      <Todo />
+      <MainPage />
     </div>
   );
 };

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import Input from './Input';
-import ListTodo from './ListTodo';
+import Input from '../components/Input';
+import ListTodo from '../components/ListTodo';
 
-class Todo extends Component {
+class MainPage extends Component {
     state = {
         todos: [],
     };
@@ -49,4 +49,4 @@ class Todo extends Component {
     }
 }
 
-export default Todo;
+export default MainPage;
