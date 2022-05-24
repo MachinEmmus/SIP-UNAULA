@@ -14,7 +14,7 @@ class Todo extends Component {
 
     getTodos = () => {
         axios
-            .get('/api/todos')
+            .get('https://sipunaula.herokuapp.com/api/todos')
             .then((res) => {
                 if (res.data) {
                     this.setState({
@@ -27,7 +27,7 @@ class Todo extends Component {
 
     deleteTodo = (id) => {
         axios
-            .delete(`/api/todos/${id}`)
+            .delete(`https://sipunaula.herokuapp.com/api/todos${id}`)
             .then((res) => {
                 if (res.data) {
                     this.getTodos();
