@@ -1,11 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -13,12 +10,27 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
+import { useNavigate, Link } from "react-router-dom";
+
+const defaultRegisterForm = {
+    documentType: "",
+    document: "",
+    firstName: "",
+    secondName: "",
+    firstLastName: "",
+    secondLastName: "",
+    dateBirth: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+}
+
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
             {'Copyright © '}
-            <Link color="inherit" href="https://www.unaula.edu.co/">
-                Your Website
+            <Link to="https://www.unaula.edu.co/" color="inherit">
+                UNAULA Website
             </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -49,6 +61,28 @@ const useStyles = makeStyles((theme) => ({
 export default function Register() {
     const classes = useStyles();
 
+    const navigate = useNavigate();
+
+    const [registerForm, setRegisterForm] = useState(defaultRegisterForm);
+
+    const sendRegisterForm = async (e) => {
+        e.preventDefault();
+
+        const response = await fetch('https://sipunaula.herokuapp.com/api/register', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(registerForm),
+		})
+
+		const data = await response.json()
+
+		if (data.status === 'ok') {
+            console.log(navigate('/login'));
+		}
+    }
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -57,9 +91,9 @@ export default function Register() {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Sign up
+                    Registro
                 </Typography>
-                <form className={classes.form} noValidate>
+                <form className={classes.form}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
@@ -68,9 +102,13 @@ export default function Register() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="firstName"
+                                id={registerForm.firstName}
                                 label="Primer Nombre"
                                 autoFocus
+                                onChange={(e) => setRegisterForm({
+                                    ...registerForm,
+                                    [e.target.name]: e.target.value
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -78,11 +116,14 @@ export default function Register() {
                                 autoComplete="fname"
                                 name="secondName"
                                 variant="outlined"
-                                required
                                 fullWidth
-                                id="secondName"
+                                id={registerForm.secondName}
                                 label="Segundo Nombre"
                                 autoFocus
+                                onChange={(e) => setRegisterForm({
+                                    ...registerForm,
+                                    [e.target.name]: e.target.value
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -90,21 +131,28 @@ export default function Register() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="firstLastName"
+                                id={registerForm.firstLastName}
                                 label="Primer Apellido"
                                 name="firstLastName"
                                 autoComplete="lname"
+                                onChange={(e) => setRegisterForm({
+                                    ...registerForm,
+                                    [e.target.name]: e.target.value
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                required
                                 fullWidth
-                                id="secondLastName"
+                                id={registerForm.secondLastName}
                                 label="Segundo Apellido"
                                 name="secondLastName"
                                 autoComplete="lname"
+                                onChange={(e) => setRegisterForm({
+                                    ...registerForm,
+                                    [e.target.name]: e.target.value
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -112,10 +160,13 @@ export default function Register() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="documentType"
+                                id={registerForm.documentType}
                                 label="Tipo Documento"
                                 name="documentType"
-                                autoComplete="email"
+                                onChange={(e) => setRegisterForm({
+                                    ...registerForm,
+                                    [e.target.name]: e.target.value
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -123,10 +174,14 @@ export default function Register() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="document"
+                                id={registerForm.document}
                                 label="Documento"
                                 name="document"
                                 autoComplete="email"
+                                onChange={(e) => setRegisterForm({
+                                    ...registerForm,
+                                    [e.target.name]: e.target.value
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -134,10 +189,14 @@ export default function Register() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="dateBirth"
+                                id={registerForm.dateBirth}
                                 label="Fecha Nacimiento"
                                 name="dateBirth"
-                                autoComplete="email"
+                                autoComplete="bday"
+                                onChange={(e) => setRegisterForm({
+                                    ...registerForm,
+                                    [e.target.name]: e.target.value
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -145,10 +204,14 @@ export default function Register() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id="email"
+                                id={registerForm.email}
                                 label="Email"
                                 name="email"
                                 autoComplete="email"
+                                onChange={(e) => setRegisterForm({
+                                    ...registerForm,
+                                    [e.target.name]: e.target.value
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -159,18 +222,33 @@ export default function Register() {
                                 name="password"
                                 label="Contraseña"
                                 type="password"
-                                id="password"
+                                id={registerForm.password}
                                 autoComplete="current-password"
+                                onChange={(e) => setRegisterForm({
+                                    ...registerForm,
+                                    [e.target.name]: e.target.value
+                                })}
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <FormControlLabel
-                                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                                label="I want to receive inspiration, marketing promotions and updates via email."
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                name="confirmPassword"
+                                label="Confirmar Contraseña"
+                                type="password"
+                                id={registerForm.confirmPassword}
+                                autoComplete="current-password"
+                                onChange={(e) => setRegisterForm({
+                                    ...registerForm,
+                                    [e.target.name]: e.target.value
+                                })}
                             />
                         </Grid>
                     </Grid>
                     <Button
+                        onClick={(e) => sendRegisterForm(e)}
                         type="submit"
                         fullWidth
                         variant="contained"
@@ -181,7 +259,7 @@ export default function Register() {
                     </Button>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Link href="#" variant="body2">
+                            <Link to="/login">
                                 Ya tienes cuenta? Inicia Sesion
                             </Link>
                         </Grid>
