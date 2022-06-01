@@ -33,7 +33,7 @@ const UserSchema = new Schema({
     },
     password: {
         type: String,
-        required: [true, 'El email es requerido'],
+        required: [true, 'La contraseña es requerida'],
         unique: true
     },
 });
