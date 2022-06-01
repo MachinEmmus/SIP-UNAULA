@@ -1,30 +1,60 @@
 const express = require('express');
 const router = express.Router();
-const Todo = require('../models/todo');
+const User = require('../models/User');
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 
-router.get('/todos', (req, res, next) => {
-    // This will return all the data, exposing only the id and action field to the client
-    Todo.find({}, 'action')
-        .then((data) => res.json(data))
-        .catch(next);
-});
+router.get('/api', async (req, res) => console.log('API FUNCIONANDO CORRECTAMENTE'));
 
-router.post('/todos', (req, res, next) => {
-    if (req.body.action) {
-        Todo.create(req.body)
-            .then((data) => res.json(data))
-            .catch(next);
-    } else {
-        res.json({
-            error: 'The input field is empty',
+router.post('/api/register', async (req, res, next) => {
+    console.log(req.body);
+    try {
+        const newPassword = await bcrypt.hash(req.body.password, 10)
+        await User.create({
+            documentType: req.body.documentType,
+            document: req.body.document,
+            firstName: req.body.firstName,
+            secondName: req.body.secondName,
+            firstLastName: req.body.firstLastName,
+            secondLastName: req.body.secondLastName,
+            dateBirth: req.body.dateBirth,
+            email: req.body.email,
+            password: newPassword,
         });
+        res.json({ status: 'ok' });
+    } catch (err) {
+        res.json({ status: 'error', error: err })
     }
 });
 
-router.delete('/todos/:id', (req, res, next) => {
-    Todo.findOneAndDelete({ _id: req.params.id })
-        .then((data) => res.json(data))
-        .catch(next);
-});
+router.post('/api/login', async (req, res) => {
+    const user = await User.findOne({
+        email: req.body.email,
+    })
+
+    if (!user) {
+        return { status: 'error', error: 'Invalid login' }
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+        req.body.password,
+        user.password
+    )
+
+    if (isPasswordValid) {
+        const token = jwt.sign(
+            {
+                name: user.name,
+                email: user.email,
+            },
+            'secret123'
+        )
+
+        return res.json({ status: 'ok', user: token })
+    } else {
+        return res.json({ status: 'error', user: false })
+    }
+})
+
 
 module.exports = router;
