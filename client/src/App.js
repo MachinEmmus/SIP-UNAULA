@@ -21,7 +21,7 @@ const App = () => {
         <Container>
           <Routes>
             <Route index path="/" exact element={<DashBoard />} />
-            <Route path="/Login" exact element={<Login />} />
+            <Route path="/login" exact element={<Login />} />
             <Route path="/register" exact element={<Register />} />
             <Route path="/encuesta" exact element={<Encuesta />} />
           </Routes>
