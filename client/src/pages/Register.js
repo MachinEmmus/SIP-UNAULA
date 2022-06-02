@@ -17,6 +17,12 @@ import { useSnackbar } from 'notistack';
 
 import { useNavigate, Link } from "react-router-dom";
 
+const errorsMapped = {
+    11000: "El documento o email ya se encuentran registrados",
+};
+
+const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
 const defaultRegisterForm = {
     documentType: "",
     document: "",
@@ -27,6 +33,7 @@ const defaultRegisterForm = {
     dateBirth: new Date(),
     email: "",
     password: "",
+    confirmPassword: "",
 }
 
 function Copyright() {
@@ -82,9 +89,22 @@ export default function Register() {
     const sendRegisterForm = async (e) => {
         e.preventDefault();
 
-        console.log(registerForm);
+        const verifyPassword = registerForm.password === registerForm.confirmPassword;
+        const verifyEmail = regex.test(registerForm.email);
 
-        const response = await fetch('http://localhost:5000/api/register', {
+        if (!verifyPassword) {
+            enqueueSnackbar('Las contraseñas no coinciden por favor corrijalas', {
+                variant: 'error',
+            });
+        }
+
+        if (!verifyEmail) {
+            enqueueSnackbar('El email no es valido', {
+                variant: 'error',
+            });
+        }
+
+        const response = await fetch('https://sip-unaula--server.herokuapp.com/api/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -95,9 +115,14 @@ export default function Register() {
         const data = await response.json()
 
         if (data.status === 'ok') {
+            enqueueSnackbar('Usuario registrado con exito', {
+                variant: 'success',
+            });
             navigate('/login');
         } else {
-            enqueueSnackbar('Ocurrio un error', {
+            const { code } = data.error;
+            const message = errorsMapped[code]
+            enqueueSnackbar(message || 'Revise los campos obligatorios', {
                 variant: 'error',
             });
         }
@@ -209,10 +234,7 @@ export default function Register() {
                                 label="Email"
                                 name="email"
                                 autoComplete="email"
-                                onChange={(e) => setRegisterForm({
-                                    ...registerForm,
-                                    [e.target.name]: e.target.value
-                                })}
+                                onChange={actualizarState}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -225,13 +247,9 @@ export default function Register() {
                                 type="password"
                                 id={registerForm.password}
                                 autoComplete="current-password"
-                                onChange={(e) => setRegisterForm({
-                                    ...registerForm,
-                                    [e.target.name]: e.target.value
-                                })}
+                                onChange={actualizarState}
                             />
                         </Grid>
-                        {/*
                         <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
@@ -242,13 +260,9 @@ export default function Register() {
                                 type="password"
                                 id={registerForm.confirmPassword}
                                 autoComplete="current-password"
-                                onChange={(e) => setRegisterForm({
-                                    ...registerForm,
-                                    [e.target.name]: e.target.value
-                                })}
+                                onChange={actualizarState}
                             />
                         </Grid>
-                            */}
                     </Grid>
                     <Button
                         onClick={(e) => sendRegisterForm(e)}
