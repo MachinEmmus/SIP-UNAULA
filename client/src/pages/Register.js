@@ -189,13 +189,12 @@ export default function Register() {
                         <Grid item xs={12}>
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <DatePicker
-                                    label="Fecha Nacimiento"
-                                    inputFormat="dd/mm/yyyy"
-                                    name
+                                    openTo="year"
+                                    views={['year', 'month', 'day']}
                                     value={registerForm.dateBirth}
-                                    onChange={(value) => ({
+                                    onChange={(value) => setRegisterForm({
                                         ...registerForm,
-                                        [registerForm.dateBirth]: value
+                                        dateBirth: value,
                                     })}
                                     renderInput={(params) => <TextField {...params} />}
                                 />
