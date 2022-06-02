@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
+const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
-router.get('/api', async (req, res) => console.log('API FUNCIONANDO CORRECTAMENTE'));
+router.get('/api', (req, res, next) => {
+    // get placeholder
+});
 
-router.post('/api/register', async (req, res, next) => {
-    console.log(req.body);
+router.post('/register', async (req, res, next) => {
     try {
         const newPassword = await bcrypt.hash(req.body.password, 10)
         await User.create({
@@ -23,11 +24,12 @@ router.post('/api/register', async (req, res, next) => {
         });
         res.json({ status: 'ok' });
     } catch (err) {
+        console.log(err);
         res.json({ status: 'error', error: err })
     }
 });
 
-router.post('/api/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
     const user = await User.findOne({
         email: req.body.email,
     })
@@ -54,7 +56,6 @@ router.post('/api/login', async (req, res) => {
     } else {
         return res.json({ status: 'error', user: false })
     }
-})
-
+});
 
 module.exports = router;
