@@ -17,10 +17,24 @@ export default function Nabvar() {
         <Container>
           <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              <Link to="/" style={{ textDecoration: "none", color: '#eee' }}>
+              <Link to="/" style={{ textDecoration: "none", color: '#ff8000' }}>
                 SIP UNAULA
               </Link>
             </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate("/register")}
+            >
+              Register
+            </Button>
             <Button
               variant="contained"
               color="primary"

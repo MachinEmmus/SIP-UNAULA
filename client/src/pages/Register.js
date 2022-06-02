@@ -9,6 +9,11 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+
+import { useSnackbar } from 'notistack';
 
 import { useNavigate, Link } from "react-router-dom";
 
@@ -19,10 +24,9 @@ const defaultRegisterForm = {
     secondName: "",
     firstLastName: "",
     secondLastName: "",
-    dateBirth: "",
+    dateBirth: new Date(),
     email: "",
     password: "",
-    confirmPassword: "",
 }
 
 function Copyright() {
@@ -63,24 +67,40 @@ export default function Register() {
 
     const navigate = useNavigate();
 
+    const { enqueueSnackbar } = useSnackbar();
+
     const [registerForm, setRegisterForm] = useState(defaultRegisterForm);
+
+    //Funcion que se  ejecuta cada que el usuario escribe en los input
+    const actualizarState = (e) => {
+        setRegisterForm({
+            ...registerForm,
+            [e.target.name]: e.target.value,
+        });
+    };
 
     const sendRegisterForm = async (e) => {
         e.preventDefault();
 
-        const response = await fetch('https://sipunaula.herokuapp.com/api/register', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(registerForm),
-		})
+        console.log(registerForm);
 
-		const data = await response.json()
+        const response = await fetch('http://localhost:5000/api/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(registerForm),
+        })
 
-		if (data.status === 'ok') {
-            console.log(navigate('/login'));
-		}
+        const data = await response.json()
+
+        if (data.status === 'ok') {
+            navigate('/login');
+        } else {
+            enqueueSnackbar('Ocurrio un error', {
+                variant: 'error',
+            });
+        }
     }
 
     return (
@@ -105,10 +125,7 @@ export default function Register() {
                                 id={registerForm.firstName}
                                 label="Primer Nombre"
                                 autoFocus
-                                onChange={(e) => setRegisterForm({
-                                    ...registerForm,
-                                    [e.target.name]: e.target.value
-                                })}
+                                onChange={actualizarState}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -120,10 +137,7 @@ export default function Register() {
                                 id={registerForm.secondName}
                                 label="Segundo Nombre"
                                 autoFocus
-                                onChange={(e) => setRegisterForm({
-                                    ...registerForm,
-                                    [e.target.name]: e.target.value
-                                })}
+                                onChange={actualizarState}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -135,10 +149,7 @@ export default function Register() {
                                 label="Primer Apellido"
                                 name="firstLastName"
                                 autoComplete="lname"
-                                onChange={(e) => setRegisterForm({
-                                    ...registerForm,
-                                    [e.target.name]: e.target.value
-                                })}
+                                onChange={actualizarState}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -149,10 +160,7 @@ export default function Register() {
                                 label="Segundo Apellido"
                                 name="secondLastName"
                                 autoComplete="lname"
-                                onChange={(e) => setRegisterForm({
-                                    ...registerForm,
-                                    [e.target.name]: e.target.value
-                                })}
+                                onChange={actualizarState}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -163,10 +171,7 @@ export default function Register() {
                                 id={registerForm.documentType}
                                 label="Tipo Documento"
                                 name="documentType"
-                                onChange={(e) => setRegisterForm({
-                                    ...registerForm,
-                                    [e.target.name]: e.target.value
-                                })}
+                                onChange={actualizarState}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -178,26 +183,23 @@ export default function Register() {
                                 label="Documento"
                                 name="document"
                                 autoComplete="email"
-                                onChange={(e) => setRegisterForm({
-                                    ...registerForm,
-                                    [e.target.name]: e.target.value
-                                })}
+                                onChange={actualizarState}
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                id={registerForm.dateBirth}
-                                label="Fecha Nacimiento"
-                                name="dateBirth"
-                                autoComplete="bday"
-                                onChange={(e) => setRegisterForm({
-                                    ...registerForm,
-                                    [e.target.name]: e.target.value
-                                })}
-                            />
+                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                <DatePicker
+                                    label="Fecha Nacimiento"
+                                    inputFormat="dd/mm/yyyy"
+                                    name
+                                    value={registerForm.dateBirth}
+                                    onChange={(value) => ({
+                                        ...registerForm,
+                                        [registerForm.dateBirth]: value
+                                    })}
+                                    renderInput={(params) => <TextField {...params} />}
+                                />
+                            </LocalizationProvider>
                         </Grid>
                         <Grid item xs={12}>
                             <TextField
@@ -230,6 +232,7 @@ export default function Register() {
                                 })}
                             />
                         </Grid>
+                        {/*
                         <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
@@ -246,6 +249,7 @@ export default function Register() {
                                 })}
                             />
                         </Grid>
+                            */}
                     </Grid>
                     <Button
                         onClick={(e) => sendRegisterForm(e)}
