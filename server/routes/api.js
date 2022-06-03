@@ -88,4 +88,14 @@ router.post('/sendEncuesta', async (req, res, next) => {
     }
 });
 
+router.get('/getEncuestas', async(req, res) => {
+    try {
+        const encuestaData = await Encuesta.find({});
+        res.json({ status: 'ok', data: encuestaData });
+    } catch (err) {
+        console.log(err);
+        res.json({ status: 'error', error: err })
+    }
+})
+
 module.exports = router;

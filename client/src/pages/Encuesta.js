@@ -112,7 +112,11 @@ export default function Encuesta() {
     const sendPollForm = async (e) => {
         e.preventDefault();
 
-        const sendEncuesta = Object.assign(pollForm, { 'userDocument': localStorage.getItem('userDocument') })
+        console.log(localStorage.getItem('userDocument'))
+
+        const sendEncuesta = Object.assign(pollForm, { 'document': localStorage.getItem('userDocument') })
+
+        console.log(sendEncuesta);
 
         const response = await fetch('https://sip-unaula--server.herokuapp.com/api/sendEncuesta', {
             method: 'POST',

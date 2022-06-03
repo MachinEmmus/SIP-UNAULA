@@ -105,7 +105,7 @@ export default function Register() {
             });
         }
 
-        if (!verifyPasswordLength) {
+        if (verifyPasswordLength) {
             enqueueSnackbar('La contraseña debe ser de al menos 4 caracteres', {
                 variant: 'error',
             });
@@ -218,6 +218,9 @@ export default function Register() {
                                 onChange={actualizarState}
                             />
                         </Grid>
+                        <Typography component="p" variant="subtitle1">
+                        Ingresa tu fecha de nacimiento:
+                    </Typography>
                         <Grid item xs={12}>
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <DatePicker
