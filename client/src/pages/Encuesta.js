@@ -1,6 +1,3 @@
-
-import _ from 'lodash';
-
 import React, { useEffect, useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -117,7 +114,7 @@ export default function Encuesta() {
 
         const sendEncuesta = Object.assign(pollForm, { 'userDocument': localStorage.getItem('userDocument') })
 
-        const response = await fetch('http://localhost:5000/api/sendEncuesta', {
+        const response = await fetch('https://sip-unaula--server.herokuapp.com/api/sendEncuesta', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -144,8 +141,8 @@ export default function Encuesta() {
             enqueueSnackbar('Inicie Sesion para diligenciar la encuesta', {
                 variant: 'error',
             });
+            navigate('/');
         }
-        navigate('/');
     });
 
     return (
@@ -252,7 +249,7 @@ export default function Encuesta() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id={pollForm.durationCovid}
+                                id={pollForm.durationCovid.toString()}
                                 autoFocus
                                 onChange={actualizarState}
                             />
@@ -269,7 +266,7 @@ export default function Encuesta() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id={pollForm.timesHimCovid}
+                                id={pollForm.timesHimCovid.toString()}
                                 autoFocus
                                 onChange={actualizarState}
                             />
@@ -286,7 +283,7 @@ export default function Encuesta() {
                                 variant="outlined"
                                 required
                                 fullWidth
-                                id={pollForm.numberOfDosis}
+                                id={pollForm.numberOfDosis.toString()}
                                 autoFocus
                                 onChange={actualizarState}
                             />
