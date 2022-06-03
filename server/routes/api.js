@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User')
+const Encuesta = require('../models/Encuesta')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
@@ -52,7 +53,12 @@ router.post('/login', async (req, res, next) => {
             'secret123'
         )
 
-        return res.json({ status: 'ok', user: token })
+        const objectReturn = {
+            userToken: token,
+            userDocument: user.document,
+        }
+
+        return res.json({ status: 'ok', user: objectReturn })
     } else {
         return res.json({ status: 'error', user: false })
     }
@@ -60,17 +66,21 @@ router.post('/login', async (req, res, next) => {
 
 router.post('/sendEncuesta', async (req, res, next) => {
     try {
-        await User.create({
-            documentType: req.body.documentType,
-            document: req.body.document,
-            firstName: req.body.firstName,
-            secondName: req.body.secondName,
-            firstLastName: req.body.firstLastName,
-            secondLastName: req.body.secondLastName,
-            dateBirth: req.body.dateBirth,
-            email: req.body.email,
-            password: newPassword,
-        });
+        await Encuesta.findOneAndUpdate(
+            { document: req.body.document, },
+            {
+                document: req.body.document,
+                rol: req.body.rol,
+                gender: req.body.gender,
+                hadCovid: req.body.hadCovid,
+                sintomas: req.body.sintomas,
+                durationCovid: req.body.durationCovid,
+                timesHimCovid: req.body.timesHimCovid,
+                numberOfDosis: req.body.numberOfDosis,
+                postCovdiEffect: req.body.postCovdiEffect,
+            },
+            { upsert: true }
+        );
         res.json({ status: 'ok' });
     } catch (err) {
         console.log(err);
