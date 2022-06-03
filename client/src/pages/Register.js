@@ -90,6 +90,7 @@ export default function Register() {
         e.preventDefault();
 
         const verifyPassword = registerForm.password === registerForm.confirmPassword;
+        const verifyPasswordLength = registerForm.password.length < 3;
         const verifyEmail = regex.test(registerForm.email);
 
         if (!verifyPassword) {
@@ -100,6 +101,12 @@ export default function Register() {
 
         if (!verifyEmail) {
             enqueueSnackbar('El email no es valido', {
+                variant: 'error',
+            });
+        }
+
+        if (!verifyPasswordLength) {
+            enqueueSnackbar('La contraseña debe ser de al menos 4 caracteres', {
                 variant: 'error',
             });
         }
