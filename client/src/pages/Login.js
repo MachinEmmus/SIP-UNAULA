@@ -76,7 +76,13 @@ export default function Login() {
 
         const { email, password } = login;
 
-        const response = await fetch('http://localhost:5000/api/login', {
+        if (email.length === 0 || password.length === 0) {
+            enqueueSnackbar('El email y la contraseña no pueden estar vacios', {
+                variant: 'error',
+            });
+        }
+
+        const response = await fetch('https://sip-unaula--server.herokuapp.com/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
