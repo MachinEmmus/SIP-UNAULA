@@ -5,7 +5,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -15,14 +14,14 @@ import Container from '@material-ui/core/Container';
 
 import { useSnackbar } from 'notistack';
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
             {'Copyright © '}
-            <Link color="inherit" href="https://mui.com/">
-                Your Website
+            <Link to="https://www.unaula.edu.co/" color="inherit">
+                UNAULA Website
             </Link>{' '}
             {new Date().getFullYear()}
             {'.'}
@@ -96,7 +95,11 @@ export default function Login() {
         const data = await response.json()
 
         if (data.user) {
-            localStorage.setItem('token', data.user)
+            const { userToken, userDocument } = data.user;
+            console.log(userToken, userDocument);
+            localStorage.setItem('token', userToken)
+            localStorage.setItem('userEmail', email)
+            localStorage.setItem('userDocument', userDocument)
             enqueueSnackbar('Logeo Exitoso', {
                 variant: 'success',
             });
@@ -116,7 +119,7 @@ export default function Login() {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Sign in
+                    Inicio de Sesion
                 </Typography>
                 <form className={classes.form} noValidate onSubmit={loginUser}>
                     <TextField
@@ -125,7 +128,7 @@ export default function Login() {
                         required
                         fullWidth
                         id="email"
-                        label="Email Address"
+                        label="Email"
                         name="email"
                         autoComplete="email"
                         autoFocus
@@ -137,7 +140,7 @@ export default function Login() {
                         required
                         fullWidth
                         name="password"
-                        label="Password"
+                        label="Contraseña"
                         type="password"
                         id="password"
                         autoComplete="current-password"
@@ -145,7 +148,7 @@ export default function Login() {
                     />
                     <FormControlLabel
                         control={<Checkbox value="remember" color="primary" />}
-                        label="Remember me"
+                        label="Recuerdame"
                     />
                     <Button
                         type="submit"
@@ -154,17 +157,17 @@ export default function Login() {
                         color="primary"
                         className={classes.submit}
                     >
-                        Sign In
+                        Iniciar
                     </Button>
                     <Grid container>
                         <Grid item xs>
-                            <Link href="#" variant="body2">
-                                Forgot password?
+                            <Link to="/login">
+                                Olvidaste la contraseña?
                             </Link>
                         </Grid>
                         <Grid item>
-                            <Link href="#" variant="body2">
-                                {"Don't have an account? Sign Up"}
+                            <Link to="/register">
+                                No tienes cuenta? Registrate
                             </Link>
                         </Grid>
                     </Grid>
