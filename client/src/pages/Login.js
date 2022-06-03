@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -13,6 +13,10 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 
+import { useSnackbar } from 'notistack';
+
+import { useNavigate } from "react-router-dom";
+
 function Copyright() {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
@@ -24,6 +28,11 @@ function Copyright() {
             {'.'}
         </Typography>
     );
+}
+
+const defaultLogin = {
+    email: "",
+    password: "",
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -46,8 +55,52 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function SignIn() {
+export default function Login() {
     const classes = useStyles();
+
+    const { enqueueSnackbar } = useSnackbar();
+
+    const navigate = useNavigate();
+
+    const [login, setLogin] = useState(defaultLogin);
+
+    const actualizarState = (e) => {
+        setLogin({
+            ...login,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    async function loginUser(event) {
+        event.preventDefault()
+
+        const { email, password } = login;
+
+        const response = await fetch('http://localhost:5000/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email,
+                password
+            }),
+        })
+
+        const data = await response.json()
+
+        if (data.user) {
+            localStorage.setItem('token', data.user)
+            enqueueSnackbar('Logeo Exitoso', {
+                variant: 'success',
+            });
+            navigate('/');
+        } else {
+            enqueueSnackbar('Por favor verifique su email y contraseña', {
+                variant: 'error',
+            });
+        }
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -59,7 +112,7 @@ export default function SignIn() {
                 <Typography component="h1" variant="h5">
                     Sign in
                 </Typography>
-                <form className={classes.form} noValidate>
+                <form className={classes.form} noValidate onSubmit={loginUser}>
                     <TextField
                         variant="outlined"
                         margin="normal"
@@ -70,6 +123,7 @@ export default function SignIn() {
                         name="email"
                         autoComplete="email"
                         autoFocus
+                        onChange={actualizarState}
                     />
                     <TextField
                         variant="outlined"
@@ -81,6 +135,7 @@ export default function SignIn() {
                         type="password"
                         id="password"
                         autoComplete="current-password"
+                        onChange={actualizarState}
                     />
                     <FormControlLabel
                         control={<Checkbox value="remember" color="primary" />}

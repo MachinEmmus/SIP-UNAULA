@@ -58,4 +58,24 @@ router.post('/login', async (req, res, next) => {
     }
 });
 
+router.post('/sendEncuesta', async (req, res, next) => {
+    try {
+        await User.create({
+            documentType: req.body.documentType,
+            document: req.body.document,
+            firstName: req.body.firstName,
+            secondName: req.body.secondName,
+            firstLastName: req.body.firstLastName,
+            secondLastName: req.body.secondLastName,
+            dateBirth: req.body.dateBirth,
+            email: req.body.email,
+            password: newPassword,
+        });
+        res.json({ status: 'ok' });
+    } catch (err) {
+        console.log(err);
+        res.json({ status: 'error', error: err })
+    }
+});
+
 module.exports = router;
