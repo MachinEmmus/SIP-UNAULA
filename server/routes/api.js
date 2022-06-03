@@ -66,6 +66,16 @@ router.post('/login', async (req, res, next) => {
 
 router.post('/sendEncuesta', async (req, res, next) => {
     try {
+        await Encuesta.findO({});
+        res.json({ status: 'ok' });
+    } catch (err) {
+        console.log(err);
+        res.json({ status: 'error', error: err })
+    }
+});
+
+router.get('/', async (req, res, next) => {
+    try {
         await Encuesta.findOneAndUpdate(
             { document: req.body.document, },
             {
