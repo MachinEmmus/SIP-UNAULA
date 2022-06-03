@@ -5,6 +5,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { Container } from "@mui/material";
+import Tooltip from '@mui/material/Tooltip';
 
 import { useNavigate, Link } from "react-router-dom";
 
@@ -21,30 +22,50 @@ export default function Nabvar() {
                 SIP UNAULA
               </Link>
             </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => navigate("/register")}
-            >
-              Register
-            </Button>
+            {localStorage.getItem('token')
+              ? <>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    localStorage.clear();
+                    navigate("/")
+                  }}
+                >
+                  Cerrar Sesion
+                </Button>
+              </>
+              :
+              <>
+                <Tooltip title="Para diligenciar la encuesta inicia sesion" placement="bottom" arrow>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => navigate("/login")}
+                  >
+                    Inicio de Sesion
+                  </Button>
+                </Tooltip>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => navigate("/register")}
+                >
+                  Registrarse
+                </Button>
+              </>
+            }
             <Button
               variant="contained"
               color="primary"
               onClick={() => navigate("/encuesta")}
+              disabled={localStorage.getItem('token') ? false : true}
             >
               Encuesta
             </Button>
           </Toolbar>
         </Container>
       </AppBar>
-    </Box>
+    </Box >
   );
 }
