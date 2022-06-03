@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
+import BarChart from "../components/BarChart";
+import LineChart from "../components/LineChart";
+import PieChart from "../components/PieChart";
+
 import { useSnackbar } from 'notistack';
 
 export default function DashBoard() {
@@ -7,6 +11,44 @@ export default function DashBoard() {
     const { enqueueSnackbar } = useSnackbar();
 
     const [datosEncuesta, setDatosEncuesta] = useState([])
+
+    const roles = ['student', 'teacher', 'administrative', 'other'];
+
+    const dataPie = {};
+    const dataRolCount = {};
+    const arrayDataSet = []
+
+    datosEncuesta.forEach(({ rol, durationCovid }) => {
+        dataPie[rol] = !dataPie[rol] ? durationCovid : dataPie[rol] += durationCovid;
+        dataRolCount[rol] = !dataRolCount[rol] ? 1 : dataRolCount[rol] += 1;
+    })
+
+    
+    const sumData = () => {
+        for (let i = 0; i < 4; i+= 1){
+        arrayDataSet.push(dataPie[roles[i]] / dataRolCount[roles[i]])
+    }}
+
+    sumData();
+
+    const config = {
+        labels: ["ESTUDIANTE", "DOCENTE", "ADMINISTRATIVO", "OTROS"],
+        datasets: [
+          {
+            label: "Dias en Promedio con Covid",
+            data: arrayDataSet,
+            backgroundColor: [
+              "rgba(75,192,192,1)",
+              "#ecf0f1",
+              "#50AF95",
+              "#f3ba2f",
+              "#2a71d0",
+            ],
+            borderColor: "black",
+            borderWidth: 2,
+          },
+        ],
+      }
 
     const getDataEncuesta = async () => {
         const response = await fetch('http://localhost:5000/api/getEncuestas', {
@@ -20,8 +62,6 @@ export default function DashBoard() {
                 variant: 'success',
             });
 
-            console.log(data.data);
-
             setDatosEncuesta(data.data);
         } else {
             enqueueSnackbar('Ocurrio un error, obteniendo los datos de la encuesta', {
@@ -32,12 +72,18 @@ export default function DashBoard() {
 
     useEffect(() => {
         getDataEncuesta()
-        console.log(datosEncuesta);
     }, [])
     return (
         <>
-            <p> GRACIAS CHICOS :) SOLO ME FALTA PROGRAMAR PONER GRAFIQUITAS Y TERMINAMOS</p>
-            <p> SE QUE A NIVEL VISUAL NO ES LO MEJOR PERO BUENO PERDON Y GRACIAS</p>
+            <div style={{ width: 700 }}>
+                <BarChart chartData={config} />
+            </div>
+            <div style={{ width: 700 }}>
+                <LineChart chartData={config} />
+    </div>
+            <div style={{ width: 700 }}>
+                <PieChart chartData={config} />
+            </div>
         </>
     );
 }
