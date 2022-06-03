@@ -1,7 +1,7 @@
 
 import _ from 'lodash';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -138,6 +138,15 @@ export default function Encuesta() {
             });
         }
     }
+
+    useEffect(() => {
+        if (!localStorage.getItem('userDocument')) {
+            enqueueSnackbar('Inicie Sesion para diligenciar la encuesta', {
+                variant: 'error',
+            });
+        }
+        navigate('/');
+    });
 
     return (
         <Container component="main" maxWidth="xs">
